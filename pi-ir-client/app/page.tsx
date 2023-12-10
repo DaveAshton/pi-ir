@@ -4,6 +4,7 @@ import Input from "./components/input";
 import { ChannelsView } from "./views";
 import styles from "./page.module.css";
 import { changeChannel } from "./api";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function Home() {
   return (
