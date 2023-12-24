@@ -7,24 +7,21 @@ import { ForwardedRef, forwardRef } from "react";
 
 type Props = {
   readonly row: ChannelEvents;
-  readonly rowIdx: number;
   readonly firstEventStart: number;
+  readonly isHeaderRow: boolean;
+  readonly nowStartTime?: number;
 };
 const getWidth = (duration: number) => duration / 10;
 
 export const GuideRow = forwardRef(
   (
-    { row, rowIdx, firstEventStart }: Props,
+    { row, firstEventStart, isHeaderRow, nowStartTime }: Props,
     ref: ForwardedRef<HTMLDivElement>
   ) => {
-    let nowStartTime: number | undefined;
-    if (rowIdx === 0) {
-      nowStartTime = findCurrentEvent(row.event)?.startTime;
-    }
     let left =
-      row.event[0].startTime === firstEventStart
+      row.event[0]?.startTime === firstEventStart
         ? 10
-        : 10 + getWidth(row.event[0].startTime - firstEventStart);
+        : 10 + getWidth(row.event[0]?.startTime - firstEventStart);
 
     return (
       <div key={row.channelid} className={styles.guideRow}>
@@ -32,19 +29,20 @@ export const GuideRow = forwardRef(
           const width = getWidth(ev.duration);
           left = width + left;
 
-          const now =
-            ev.startTime === nowStartTime ? (
-              <NowLine left={getWidth(findDurationToNow(row.event?.[0]))} />
-            ) : undefined;
-          return rowIdx === 0 ? (
+          const addNow = isHeaderRow && ev.startTime === nowStartTime;
+          const now = addNow ? (
+            <NowLine left={getWidth(findDurationToNow(row.event?.[0]))} />
+          ) : undefined;
+
+          return isHeaderRow ? (
             <div key={ev.evtId}>
               <GuideEvent
                 key={ev.evtId}
-                ref={ev.startTime === nowStartTime ? ref : undefined}
+                ref={addNow ? ref : undefined}
                 channelEvent={ev}
                 width={width}
                 left={left - width}
-                isTitle={rowIdx === 0}
+                isTitle={isHeaderRow}
               ></GuideEvent>
               {now}
             </div>
@@ -54,7 +52,7 @@ export const GuideRow = forwardRef(
               channelEvent={ev}
               width={width}
               left={left - width}
-              isTitle={rowIdx === 0}
+              isTitle={isHeaderRow}
             ></GuideEvent>
           );
         })}

@@ -27,6 +27,11 @@ export const createClockTimeEvents = (startMillis: number): ChannelEvents => {
     };
 }
 
+/**
+ * Find evnt associated with current time
+ * @param events 
+ * @returns 
+ */
 export const findCurrentEvent = (events: ReadonlyArray<ChannelEvent>) => {
     const now = toGuideTime(DateTime.now()); // .toMillis() / 1000;
     return events.find((ev, idx) => idx +1 < events.length && ev.startTime <= now && events[idx +1].startTime > now );

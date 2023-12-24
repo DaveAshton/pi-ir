@@ -4,7 +4,7 @@ var controller = require("../ir-controller");
 var router = express.Router();
 
 router.get("/", function (req, res) {
-  console.log(">> sending channel data", channelData);
+ // console.log(">> sending channel data", channelData);
   res.json(channelData);
 });
 

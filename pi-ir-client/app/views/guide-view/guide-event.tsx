@@ -26,7 +26,6 @@ const getTitleStyle = (props: Props) => ({
 })
 export const GuideEvent = forwardRef((props: Props, ref: ForwardedRef<HTMLDivElement>) => {
   const bg = props.isTitle ? "secondary" : "dark";
-//  const text = props.isTitle ? "secondary" : "dark";
   return (
     <Card ref={ref} style={getStyle(props)} title={props.channelEvent.name} bg={bg} text="white">
     <Card.Body>

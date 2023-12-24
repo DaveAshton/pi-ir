@@ -1,27 +1,37 @@
 
 .guide {
     display: grid;
-    grid-auto-columns: 104px 1fr;
-   /* overflow: auto; */
+    grid-template-columns: 104px 1fr;
+    height: 400px;
+    overflow-y: scroll;
+
 }
 
+.header {
+    grid-column-start: 2;
+    grid-row-start: 1;
+    height: fit-content;
+}
 .channelContainer {
+    margin-top: 80px;
     display: flex;
     flex-direction: column;
     grid-column-start: 1;
-
+    grid-row-start: 2;
 }
 .container {
     display: flex;
     flex-direction: column;
     overflow: scroll;
     grid-column-start: 2;
+    grid-row-start: 2;
 }
 
 .guideRow {
     display: flex;
     position: relative;
-    height: 80px;
+    height: 78px;
+    margin-top: 1px;
 }
 
 .event {
