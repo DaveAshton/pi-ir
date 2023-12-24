@@ -4,14 +4,6 @@ export const toTimeFormat = (ms: number) => {
     return toDateTime(ms).toFormat("HH:mm")
 }
 
-export const getNow = () => {
-    return Date.now()
-}
-
-// export const getDurationFromMidnight = () => {
-//     return Date.now() - DateTime.now().startOf('day').toJSDate().getTime();
-// }
-
 export const createClockTimeEvents = (startMillis: number): ChannelEvents => {
     const start = toDateTime(startMillis).startOf("hour").minus({hours: 1});
     const end = start.plus({hours: 24});
@@ -36,8 +28,20 @@ export const createClockTimeEvents = (startMillis: number): ChannelEvents => {
 }
 
 export const findCurrentEvent = (events: ReadonlyArray<ChannelEvent>) => {
-    const now = DateTime.now().toMillis() / 1000;
+    const now = toGuideTime(DateTime.now()); // .toMillis() / 1000;
     return events.find((ev, idx) => idx +1 < events.length && ev.startTime <= now && events[idx +1].startTime > now );
 };
 
+export const findDurationToNow =(ev: ChannelEvent) => {
+    const now = toGuideTime(DateTime.now());
+    return now - ev.startTime;
+}
+
 const toDateTime = (millis: number) => DateTime.fromMillis(millis *1000);
+
+/**
+ * for some reason the API sends times at second rather than millisecond granularity
+ * @param dateTime 
+ * @returns 
+ */
+const toGuideTime = (dateTime: DateTime) => dateTime.toMillis() / 1000;

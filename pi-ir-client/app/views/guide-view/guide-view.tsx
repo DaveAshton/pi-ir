@@ -1,24 +1,17 @@
 import { getChannels, getGuideEvents } from "@/app/api";
 
-import { useState, useEffect, CSSProperties, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./styles.module.css";
-import { Channel, ChannelEvent, ChannelEvents } from "@/app/types";
+import { Channel, ChannelEvents } from "@/app/types";
 import { GuideEvent } from "./guide-event";
-import { createClockTimeEvents, findCurrentEvent } from "@/app/model";
+import {
+  createClockTimeEvents,
+  findCurrentEvent,
+  findDurationToNow,
+} from "@/app/model";
 import { Title } from "./title";
-import { Button } from "react-bootstrap";
+import { GuideRow } from "./guide-row";
 
-const getWidth = (duration: number) => duration / 10;
-
-const getLineStyle = (props: NowLineProps): CSSProperties => ({
-  left: `${props.left}px`,
-});
-type NowLineProps = {
-  readonly left: number;
-};
-const NowLine = ({ left }: NowLineProps) => {
-  return <div className={styles.nowLine} style={getLineStyle({ left })}></div>;
-};
 export const GuideView = () => {
   const [guideEvents, setGuideEvents] = useState<Map<number, ChannelEvents>>(
     new Map()
@@ -47,80 +40,22 @@ export const GuideView = () => {
       setChannels([{ channelid: 1 }, ...channels])
     );
   }, []);
-  const paragraphRef = useRef<null | HTMLDivElement>(null);
-  useEffect(() => {
-    console.log(">> scrolling to ", paragraphRef.current);
-    return paragraphRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "start",
-    });
-  }, [guideEvents]);
+
+  const currentTimeRef = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => currentTimeRef.current?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+    inline: "start",
+  }), [guideEvents]);
 
   const eventRows = channels?.map((ch, rowIdx) => {
     const row = guideEvents.get(ch.channelid);
-    if (!row) {
-      return undefined;
-    }
-    let nowStartTime: number | undefined;
-    if (rowIdx === 0) {
-      nowStartTime = findCurrentEvent(row.event)?.startTime;
-    }
-    let left =
-      row.event[0].startTime === firstEventStart
-        ? 10
-        : 10 + getWidth(row.event[0].startTime - firstEventStart);
-    return (
-      <div key={row.channelid} className={styles.guideRow}>
-        {row.event?.map((ev) => {
-          const width = getWidth(ev.duration);
-          left = width + left;
-
-          return rowIdx === 0 ? (
-            <div
-              key={ev.evtId}
-            >
-             <GuideEvent
-              key={ev.evtId}
-              ref={ev.startTime === nowStartTime ? paragraphRef : undefined}
-              channelEvent={ev}
-              width={width}
-              left={left - width}
-              isTitle={rowIdx === 0}
-            ></GuideEvent>
-              <NowLine left={800} />
-            </div>
-          ) : 
-          <GuideEvent
-          key={ev.evtId}
-          channelEvent={ev}
-          width={width}
-          left={left - width}
-          isTitle={rowIdx === 0}
-        ></GuideEvent>
-        ;
-        })}
-      </div>
-    );
+    return  row && <GuideRow key={row.channelid} firstEventStart={firstEventStart} row={row} rowIdx={rowIdx} ref={currentTimeRef} />
   });
+
   return (
     <div className={styles.guide}>
-         <Button
- 
-      variant="secondary"
-      onClick={() => {
-        console.log(">> btn scrolling to ", paragraphRef.current);
-       
-        return paragraphRef.current?.scrollIntoView({
-          behavior: "smooth",
-          //   block: "start",
-          //  block: "nearest",
-          inline: "start",
-        });
-      }}
-    >
-      scroll
-    </Button>
       <div className={styles.channelContainer}>
         {channels?.map((channel) => (
           <Title key={channel.channelid} title={channel.channelname} />

@@ -39,7 +39,7 @@
 
 .nowLine {
     position: absolute;
-    height: 300px;
+    height: 1000vh;
     border-left: 4px solid green;
     /* width: 6px; */
     z-index: 2;
