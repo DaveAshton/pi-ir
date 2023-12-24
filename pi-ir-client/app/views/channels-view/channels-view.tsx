@@ -13,7 +13,7 @@ export const ChannelsView = ({ onChangeChannel }: Props) => {
   const [channels, setChannels] = useState<ReadonlyArray<Channel>>([]);
   useEffect(() => {
     getChannels().then((channels) => {
-      console.log(">> channels", channels);
+  //    console.log(">> channels", channels);
       return setChannels(channels);
     });
   }, []);
@@ -30,13 +30,13 @@ export const ChannelsView = ({ onChangeChannel }: Props) => {
   return (
     <Accordion className={styles.accordion} defaultActiveKey="0">
       <Accordion.Item eventKey="0" defaultChecked={true}>
-        <Accordion.Header>Recent Channels</Accordion.Header>
+        <Accordion.Header>Channels</Accordion.Header>
         <Accordion.Body>{channelButtons}</Accordion.Body>
       </Accordion.Item>
-      <Accordion.Item eventKey="1">
+      {/* <Accordion.Item eventKey="1">
         <Accordion.Header>All channels</Accordion.Header>
         <Accordion.Body>{channelButtons}</Accordion.Body>
-      </Accordion.Item>
+      </Accordion.Item> */}
       {/* <Accordion.Item eventKey="2">
         <Accordion.Header>Guide</Accordion.Header>
         <Accordion.Body>

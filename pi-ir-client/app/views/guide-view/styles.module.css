@@ -1,9 +1,21 @@
 
+.guide {
+    display: grid;
+    grid-auto-columns: 104px 1fr;
+    overflow-y: auto;
+}
+
+.channelContainer {
+    display: flex;
+    flex-direction: column;
+    grid-column-start: 1;
+
+}
 .container {
     display: flex;
     flex-direction: column;
     overflow-x: auto;
-
+    grid-column-start: 2;
 }
 
 .guideRow {
@@ -31,4 +43,10 @@
     border-left: 4px solid green;
     /* width: 6px; */
     z-index: 2;
+}
+
+.channelTitle {
+    height: 78px;
+    width: 100px;
+    padding-bottom: 2px;
 }

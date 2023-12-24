@@ -7,6 +7,7 @@ type Props = {
   readonly channelEvent: ChannelEvent;
   readonly left: number;
   readonly width: number;
+  readonly isTitle?: boolean;
 };
 
 // a little clunky, but we have absolute positions becuase of an infinite horizontal scroll
@@ -14,7 +15,8 @@ const getStyle = (props: Props): CSSProperties => ({
   width: `${props.width}px`,
   left: `${props.left}px`,
   position: "absolute",
-  height: "78px"
+  height: "78px",
+  overflow: "hidden"
 });
 const getTitleStyle = (props: Props) => ({
     textOverflow: "ellipsis",
@@ -23,10 +25,12 @@ const getTitleStyle = (props: Props) => ({
     overflow: "hidden"
 })
 export const GuideEvent = (props: Props) => {
+  const bg = props.isTitle ? "secondary" : "dark";
+//  const text = props.isTitle ? "secondary" : "dark";
   return (
-    <Card style={getStyle(props)} title={props.channelEvent.name}>
+    <Card style={getStyle(props)} title={props.channelEvent.name} bg={bg} text="white">
     <Card.Body>
-      <Card.Title title={props.channelEvent.description} className="h6 text-muted">
+      <Card.Title title={props.channelEvent.description} className="h6 text-white"  >
         <div style={getTitleStyle(props)}>{props.channelEvent.name}</div>
         </Card.Title>
       <Card.Text>
