@@ -8,9 +8,9 @@ export const getNow = () => {
     return Date.now()
 }
 
-export const getDurationFromMidnight = () => {
-    return Date.now() - DateTime.now().startOf('day').toJSDate().getTime();
-}
+// export const getDurationFromMidnight = () => {
+//     return Date.now() - DateTime.now().startOf('day').toJSDate().getTime();
+// }
 
 export const createClockTimeEvents = (startMillis: number): ChannelEvents => {
     const start = toDateTime(startMillis).startOf("hour").minus({hours: 1});
@@ -34,5 +34,10 @@ export const createClockTimeEvents = (startMillis: number): ChannelEvents => {
         offset: 0
     };
 }
+
+export const findCurrentEvent = (events: ReadonlyArray<ChannelEvent>) => {
+    const now = DateTime.now().toMillis() / 1000;
+    return events.find((ev, idx) => idx +1 < events.length && ev.startTime <= now && events[idx +1].startTime > now );
+};
 
 const toDateTime = (millis: number) => DateTime.fromMillis(millis *1000);

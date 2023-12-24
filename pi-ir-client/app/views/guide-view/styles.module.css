@@ -2,7 +2,7 @@
 .guide {
     display: grid;
     grid-auto-columns: 104px 1fr;
-    overflow-y: auto;
+   /* overflow: auto; */
 }
 
 .channelContainer {
@@ -14,7 +14,7 @@
 .container {
     display: flex;
     flex-direction: column;
-    overflow-x: auto;
+    overflow: scroll;
     grid-column-start: 2;
 }
 

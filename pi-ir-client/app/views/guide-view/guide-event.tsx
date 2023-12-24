@@ -1,7 +1,7 @@
 import { ChannelEvent } from "@/app/types";
 import Card from 'react-bootstrap/Card';
 import styles from "./styles.module.css";
-import { CSSProperties } from "react";
+import { CSSProperties, ForwardedRef, forwardRef } from "react";
 import { toTimeFormat } from "@/app/model";
 type Props = {
   readonly channelEvent: ChannelEvent;
@@ -24,11 +24,11 @@ const getTitleStyle = (props: Props) => ({
     width: `${props.width - 20}px`,
     overflow: "hidden"
 })
-export const GuideEvent = (props: Props) => {
+export const GuideEvent = forwardRef((props: Props, ref: ForwardedRef<HTMLDivElement>) => {
   const bg = props.isTitle ? "secondary" : "dark";
 //  const text = props.isTitle ? "secondary" : "dark";
   return (
-    <Card style={getStyle(props)} title={props.channelEvent.name} bg={bg} text="white">
+    <Card ref={ref} style={getStyle(props)} title={props.channelEvent.name} bg={bg} text="white">
     <Card.Body>
       <Card.Title title={props.channelEvent.description} className="h6 text-white"  >
         <div style={getTitleStyle(props)}>{props.channelEvent.name}</div>
@@ -39,4 +39,4 @@ export const GuideEvent = (props: Props) => {
     </Card.Body>
   </Card>
   );
-};
+});
