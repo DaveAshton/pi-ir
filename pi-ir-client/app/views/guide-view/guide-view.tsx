@@ -15,69 +15,71 @@ export const GuideView = () => {
   const [firstEventStart, setFirstEventStart] = useState<number>(0);
   const [scrollEnd, setScrollEnd] = useState<number>(20 * 80);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [fetchingChannels, setFetchingChannels] = useState<Set<number>>(
+    new Set()
+  );
   useEffect(() => {
     if (channels?.length > 0) {
       const channelCount = Math.round(scrollEnd / 70);
       const ids = channels
         .slice(0, channelCount)
-        .filter(ch =>!guideEvents.has( ch.channelid))
-        .map((ch) =>ch.channelid )
-      getGuideEvents(ids).then(
-        (events) => {
-          if (!Array.isArray(events)) {
-            return;
-          }
-          const evs = events?.filter(
-            (item) => Array.isArray(item?.event) && item.event?.length > 0
-          );
-
-          const earliestStart = Math.min(
-            ...evs?.map((row) => row.event[0].startTime)
-          );
-          const timeEvents = createClockTimeEvents(earliestStart);
-          setGuideEvents( 
-            curr => {
-              if (curr.size === 0) {
-                curr.set(1, timeEvents)
-              } 
-              evs.forEach(val => curr.set(val.channelid, val));
-              return new Map( curr);
-            }
-          );
-          setFirstEventStart(earliestStart); // set an event to calc position from
+        .filter((ch) => !guideEvents.has(ch.channelid) && !fetchingChannels.has(ch.channelid))
+        .map((ch) => ch.channelid);
+      setFetchingChannels(new Set(ids));
+      getGuideEvents(ids).then((events) => {
+        if (!Array.isArray(events)) {
+          return;
         }
-      );
+        const evs: ReadonlyArray<ChannelEvents> = events?.filter(
+          (item) => Array.isArray(item?.event) && item.event?.length > 0
+        );
+
+        const earliestStart = Math.min(
+          ...evs?.map((row) => row.event[0].startTime)
+        );
+        const timeEvents = createClockTimeEvents(earliestStart);
+        setGuideEvents((curr) => {
+          if (curr.size === 0) {
+            curr.set(1, timeEvents);
+          }
+          evs.forEach((val) => curr.set(val.channelid, val));
+          return new Map(curr);
+        });
+        console.log(">> received events", evs)
+        setFetchingChannels((curr) => {
+          return new Set(
+            evs
+              .filter((val) => !curr.has(val.channelid))
+              .map((x) => x.channelid)
+          );
+        });
+        setFirstEventStart(earliestStart); // set an event to calc position from
+      });
     }
   }, [channels, scrollEnd]);
 
   useEffect(() => {
-    getChannels().then(
-      (channels) => setChannels([...channels])
-    );
+    getChannels().then((channels) => setChannels([...channels]));
   }, []);
 
   const currentTimeRef = useRef<null | HTMLDivElement>(null);
 
-  useEffect(
-    () => {
-      if (currentTimeRef.current && !hasScrolled) {
-        currentTimeRef.current?.scrollIntoView(scrollBehaviour);
-        setHasScrolled(true);
-      }
-    },
-    [guideEvents]
-  );
+  useEffect(() => {
+    if (currentTimeRef.current && !hasScrolled) {
+      currentTimeRef.current?.scrollIntoView(scrollBehaviour);
+      setHasScrolled(true);
+    }
+  }, [guideEvents]);
 
   const handleScroll: UIEventHandler<HTMLDivElement> = debounce(300, (ev) => {
     const target = ev?.target as HTMLDivElement;
-  //  console.log(">> scrollTop", target?.scrollTop);
-    if (target?.scrollTop > scrollEnd ) {
+    //  console.log(">> scrollTop", target?.scrollTop);
+    if (target?.scrollTop > scrollEnd) {
       setScrollEnd(target?.scrollTop);
     }
-
   });
 
-  console.log(">> guide vals", guideEvents)
+  
   const eventRows = channels?.map((ch, rowIdx) => {
     const row = guideEvents.get(ch.channelid);
 
@@ -101,12 +103,16 @@ export const GuideView = () => {
   let nowStartTime = headerRow
     ? findCurrentEvent(headerRow.event)?.startTime
     : undefined;
-
+    console.log(">> fetching", fetchingChannels);
   return (
     <div className={styles.guide} onScroll={handleScroll}>
       <div className={styles.channelContainer}>
         {channels?.map((channel) => (
-          <Title key={channel.channelid} title={channel.channelname} />
+          <Title
+            key={channel.channelid}
+            title={channel.channelname}
+            isBusy={fetchingChannels.has(channel.channelid)}
+          />
         ))}
       </div>
 
@@ -132,5 +138,5 @@ export const GuideView = () => {
 const scrollBehaviour: ScrollIntoViewOptions = {
   behavior: "smooth",
   inline: "center",
-  block: 'end'
+  block: "end",
 };
