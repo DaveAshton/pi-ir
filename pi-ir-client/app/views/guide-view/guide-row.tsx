@@ -61,3 +61,4 @@ export const GuideRow = forwardRef(
     );
   }
 );
+GuideRow.displayName = "GuideRow";

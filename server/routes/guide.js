@@ -9,7 +9,7 @@ function getIds(req) {
     return undefined;
   }
   const ids = !Array.isArray(channel) ? [channel] : channel;
-  return ids?.map((ch) => `&channel=${ch}`).join("");
+  return ids && ids.length > 0 && ids.map((ch) => `&channel=${ch}`).join("");
 }
 
 router.get("/", async function (req, res) {

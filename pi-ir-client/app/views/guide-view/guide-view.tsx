@@ -5,7 +5,7 @@ import { Channel, ChannelEvents } from "@/app/types";
 import { createClockTimeEvents, findCurrentEvent, getChannelIdsTofetch, startOfDay } from "@/app/model";
 import { GuideList } from "./guide-list";
 
-export const GuideView = () => {
+export function GuideView ()  {
   const [guideEvents, setGuideEvents] = useState<Map<number, ChannelEvents>>(
     new Map()
   );

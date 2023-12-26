@@ -70,3 +70,5 @@ export const GuideEvent = forwardRef(
 
 const delay: OverlayDelay = { hide: 5, show: 0 };
 const trggerTypes: OverlayTriggerType[] = ["focus", "hover"];
+
+GuideEvent.displayName = "GuideEvent";
