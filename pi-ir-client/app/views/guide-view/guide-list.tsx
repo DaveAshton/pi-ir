@@ -35,7 +35,7 @@ export const GuideList = ({
       currentTimeRef.current?.scrollIntoView(scrollBehaviour);
       setHasScrolled(true);
     }
-  }, [guideEvents]);
+  }, [guideEvents, hasScrolled]);
 
   const eventRows = channels?.map((ch) => {
     const row = guideEvents.get(ch.channelid);
