@@ -18,6 +18,7 @@ export const GuideRow = forwardRef(
     { row, firstEventStart, isHeaderRow, nowStartTime }: Props,
     ref: ForwardedRef<HTMLDivElement>
   ) => {
+    
     let left =
       row.event[0]?.startTime === firstEventStart
         ? 10
@@ -30,6 +31,9 @@ export const GuideRow = forwardRef(
           left = width + left;
 
           const addNow = isHeaderRow && ev.startTime === nowStartTime;
+          if (addNow) {
+            console.log(">> adding now", ev, (row.event?.[0]))
+          }
           const now = addNow ? (
             <NowLine left={getWidth(findDurationToNow(row.event?.[0]))} />
           ) : undefined;
