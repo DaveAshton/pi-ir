@@ -1,52 +1,68 @@
-
 .guide {
-    display: grid;
-    grid-auto-columns: 104px 1fr;
-   /* overflow: auto; */
+  display: grid;
+  grid-template-columns: 122px 1fr;
+  height: 400px;
+  overflow-y: scroll;
+}
+
+.header {
+  grid-column-start: 2;
+  grid-row-start: 1;
+  height: fit-content;
 }
 
 .channelContainer {
-    display: flex;
-    flex-direction: column;
-    grid-column-start: 1;
-
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  grid-column-start: 1;
+  grid-row-start: 2;
 }
+
 .container {
-    display: flex;
-    flex-direction: column;
-    overflow: scroll;
-    grid-column-start: 2;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  grid-column-start: 2;
+  grid-row-start: 2;
 }
 
 .guideRow {
-    display: flex;
-    position: relative;
-    height: 80px;
+  display: flex;
+  position: relative;
+  height: 78px;
+  margin-top: 1px;
 }
 
 .event {
-    position: relative;
-    display: flex;
-    flex-direction: column;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .eventTitle {
-    font-weight: bold;
+  font-weight: bold;
 }
+
 .time {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 .nowLine {
-    position: absolute;
-    height: 1000vh;
-    border-left: 4px solid green;
-    /* width: 6px; */
-    z-index: 2;
+  position: absolute;
+  height: 1000vh;
+  border-left: 4px solid green;
+  z-index: 2;
 }
 
 .channelTitle {
-    height: 78px;
-    width: 100px;
-    padding-bottom: 2px;
+  height: 78px;
+  width: 100px;
+  padding-bottom: 2px;
+}
+
+.titleContainer:hover {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all .25s;
 }

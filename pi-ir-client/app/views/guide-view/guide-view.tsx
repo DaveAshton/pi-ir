@@ -1,67 +1,71 @@
 import { getChannels, getGuideEvents } from "@/app/api";
 
-import { useState, useEffect, useRef } from "react";
-import styles from "./styles.module.css";
+import { useState, useEffect } from "react";
 import { Channel, ChannelEvents } from "@/app/types";
-import { GuideEvent } from "./guide-event";
-import {
-  createClockTimeEvents,
-  findCurrentEvent,
-  findDurationToNow,
-} from "@/app/model";
-import { Title } from "./title";
-import { GuideRow } from "./guide-row";
+import { createClockTimeEvents, findCurrentEvent, getChannelIdsTofetch, startOfDay } from "@/app/model";
+import { GuideList } from "./guide-list";
 
-export const GuideView = () => {
+export function GuideView ()  {
   const [guideEvents, setGuideEvents] = useState<Map<number, ChannelEvents>>(
     new Map()
   );
+  const [headerEvents, setHeaderEvents] = useState<ChannelEvents | undefined>(
+    undefined
+  );
   const [channels, setChannels] = useState<ReadonlyArray<Channel>>([]);
   const [firstEventStart, setFirstEventStart] = useState<number>(0);
-  useEffect(() => {
-    getGuideEvents([560, 700]).then((events) => {
-      const evs = events?.filter(
-        (item) => Array.isArray(item?.event) && item.event?.length > 0
-      );
-
-      const earliestStart = Math.min(
-        ...evs?.map((row) => row.event[0].startTime)
-      );
-      const timeEvents = createClockTimeEvents(earliestStart);
-      setGuideEvents(
-        new Map([timeEvents, ...evs].map((e) => [e.channelid, e]))
-      );
-      setFirstEventStart(earliestStart); // set an event to calc position from
-    });
-  }, []);
+  const [scrollEnd, setScrollEnd] = useState<number>(20 * 80);
+  const [fetchingChannels, setFetchingChannels] = useState<Set<number>>(
+    new Set()
+  );
 
   useEffect(() => {
-    getChannels().then((channels) =>
-      setChannels([{ channelid: 1 }, ...channels])
-    );
+    if (channels?.length > 0) {
+      setFetchingChannels(new Set(getChannelIdsTofetch(scrollEnd, channels, guideEvents, fetchingChannels)));
+    }
+  }, [channels, scrollEnd]);
+
+  useEffect(() => {
+    const earliestStart = startOfDay();
+    setHeaderEvents(createClockTimeEvents(earliestStart));
+    setFirstEventStart(earliestStart);
+  }, [guideEvents]);
+
+  useEffect(() => {
+    if (fetchingChannels?.size > 0) {
+      getGuideEvents(Array.from(fetchingChannels.values()), guideEvents).then(
+        (events) => {
+          setGuideEvents(events);
+          setFetchingChannels(
+            (curr) =>
+              new Set(
+                Array.from(curr.values()).filter(
+                  (channelId) => !events.has(channelId)
+                )
+              )
+          );
+        }
+      );
+    }
+  }, [fetchingChannels]);
+
+  useEffect(() => {
+    getChannels().then((channels) => setChannels([...channels]));
   }, []);
 
-  const currentTimeRef = useRef<null | HTMLDivElement>(null);
-
-  useEffect(() => currentTimeRef.current?.scrollIntoView({
-    behavior: "smooth",
-    block: "start",
-    inline: "start",
-  }), [guideEvents]);
-
-  const eventRows = channels?.map((ch, rowIdx) => {
-    const row = guideEvents.get(ch.channelid);
-    return  row && <GuideRow key={row.channelid} firstEventStart={firstEventStart} row={row} rowIdx={rowIdx} ref={currentTimeRef} />
-  });
+  let nowStartTime = headerEvents
+    ? findCurrentEvent(headerEvents.event)?.startTime
+    : undefined;
 
   return (
-    <div className={styles.guide}>
-      <div className={styles.channelContainer}>
-        {channels?.map((channel) => (
-          <Title key={channel.channelid} title={channel.channelname} />
-        ))}
-      </div>
-      <div className={styles.container}>{eventRows}</div>
-    </div>
+    <GuideList
+      channels={channels}
+      guideEvents={guideEvents}
+      fetchingChannels={fetchingChannels}
+      firstEventStart={firstEventStart}
+      headerEvents={headerEvents}
+      nowStartTime={nowStartTime}
+      onScrollY={setScrollEnd}
+    />
   );
 };
