@@ -1,6 +1,6 @@
 import { ChannelEvents } from "@/app/types";
 import styles from "./styles.module.css";
-import { findCurrentEvent, findDurationToNow } from "@/app/model";
+import { findDurationToNow } from "@/app/model";
 import { GuideEvent } from "./guide-event";
 import { NowLine } from "./now-line";
 import { ForwardedRef, forwardRef } from "react";
@@ -31,9 +31,6 @@ export const GuideRow = forwardRef(
           left = width + left;
 
           const addNow = isHeaderRow && ev.startTime === nowStartTime;
-          if (addNow) {
-            console.log(">> adding now", ev, (row.event?.[0]))
-          }
           const now = addNow ? (
             <NowLine left={getWidth(findDurationToNow(row.event?.[0]))} />
           ) : undefined;

@@ -13,6 +13,5 @@ export const changeChannel = (channel?: string | number) => {
 };
 
 export const getChannels = (): Promise<ReadonlyArray<Channel>> => {
-   // console.log(">> about to get channels to", baseUrl);
-    return fetch(baseUrl).then(response => response.json());
+  return fetch(baseUrl).then((response) => response.json());
 };
