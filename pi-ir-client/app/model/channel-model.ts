@@ -15,6 +15,8 @@ export function getChannelIdsTofetch(
           !guideEvents.has(ch.channelid) && !fetchingChannels.has(ch.channelid)
       )
       .map((ch) => ch.channelid);
+
+      console.log(">> ids to fetch", ids, fetchingChannels, guideEvents)
     return ids;
   }
   

@@ -21,9 +21,9 @@ export function GuideView ()  {
 
   useEffect(() => {
     if (channels?.length > 0) {
-      setFetchingChannels(new Set(getChannelIdsTofetch(scrollEnd, channels, guideEvents, fetchingChannels)));
+      setFetchingChannels(curr => new Set(getChannelIdsTofetch(scrollEnd, channels, guideEvents, curr)));
     }
-  }, [channels, scrollEnd]);
+  }, [channels, scrollEnd, guideEvents]);
 
   useEffect(() => {
     const earliestStart = startOfDay();
@@ -36,18 +36,11 @@ export function GuideView ()  {
       getGuideEvents(Array.from(fetchingChannels.values()), guideEvents).then(
         (events) => {
           setGuideEvents(events);
-          setFetchingChannels(
-            (curr) =>
-              new Set(
-                Array.from(curr.values()).filter(
-                  (channelId) => !events.has(channelId)
-                )
-              )
-          );
+          setFetchingChannels(new Set());
         }
       );
     }
-  }, [fetchingChannels]);
+  }, [fetchingChannels, guideEvents]);
 
   useEffect(() => {
     getChannels().then((channels) => setChannels([...channels]));

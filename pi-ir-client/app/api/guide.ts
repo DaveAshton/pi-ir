@@ -29,11 +29,9 @@ const toMap = (
   if (!Array.isArray(events)) {
     return Promise.resolve( new Map<number, ChannelEvents>());
   }
-  const evs: ReadonlyArray<ChannelEvents> = events?.filter(
-    (item) => Array.isArray(item?.event) && item.event?.length > 0
+  const evs: ReadonlyArray<ChannelEvents> = events?.map(
+    (item) => Array.isArray(item?.event) ? item : {...item, event: []}
   );
-
-  // const earliestStart = startOfDay()
  
   evs.forEach((val) => current.set(val.channelid, val));
 
